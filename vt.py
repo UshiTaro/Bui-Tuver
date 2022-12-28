@@ -17,21 +17,23 @@ while (cam.isOpened()):
     gframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     face = faceDet.detectMultiScale(gframe)
-    eye = eyeDet.detectMultiScale(gframe)
-    mouth = mouthDet.detectMultiScale(gframe)
 
     if(len(face)>0):
-        x, y, w, h = face[0]
-        faceRes = cv2.resize(facePart, (w+20, h+20))
-        frame[y-10:y+h+10, x-10:x+w+10] = faceRes
+        X, Y, W, H = face[0]
+        faceRes = cv2.resize(facePart, (W,H))
+        frame[Y:Y+H, X:X+W] = faceRes
+        
+        eye = eyeDet.detectMultiScale(gframe[Y:Y+H, X:X+W])
+        mouth = mouthDet.detectMultiScale(gframe[Y:Y+H, X:X+W])
+        
         if(len(eye)>0):
             for x, y, w, h in eye[0:2]:
                 eyeRes = cv2.resize(eyePart, (w,h))
-                frame[y:y+h, x:x+w] = eyeRes
+                frame[y+Y:y+h+Y, x+X:x+w+X] = eyeRes
         if(len(mouth)>0):
             x, y, w, h = mouth[0]
             mouthRes = cv2.resize(mouthPart, (w,h))
-            frame[y:y+h, x:x+w] = mouthRes
+            frame[y+Y:y+h+Y, x+X:x+w+X] = mouthRes
         
     cv2.imshow("Bui Tuver", frame)
 
